@@ -3,253 +3,177 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Student Dashboard</title>
+<title>Focus Mode Pro</title>
 
 <style>
-:root {
-    --bg: #0f172a;
-    --card: rgba(255,255,255,0.05);
-    --text: white;
-}
-
-body.light {
-    --bg: #f1f5f9;
-    --card: rgba(0,0,0,0.05);
-    --text: black;
-}
-
 body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    transition: 0.3s;
-}
-
-/* LOGIN */
-#loginPage {
-    display:flex;
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    color:white;
     height:100vh;
+    display:flex;
     justify-content:center;
     align-items:center;
+    overflow:hidden;
+    background: linear-gradient(-45deg, #0f172a, #1e293b, #020617, #1e3a8a);
+    background-size: 400% 400%;
+    animation: bg 12s ease infinite;
 }
 
-.login-box {
-    background: var(--card);
-    padding:30px;
-    border-radius:15px;
-    backdrop-filter: blur(12px);
+@keyframes bg {
+    0% {background-position:0% 50%;}
+    50% {background-position:100% 50%;}
+    100% {background-position:0% 50%;}
+}
+
+.container {
+    backdrop-filter: blur(20px);
+    background: rgba(255,255,255,0.05);
+    padding:40px;
+    border-radius:20px;
+    width:340px;
     text-align:center;
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
 }
 
+/* TIMER CIRCLE */
+.circle {
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    border:8px solid rgba(255,255,255,0.1);
+    margin:20px auto;
+    position:relative;
+}
+
+.progress {
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    border:8px solid cyan;
+    clip-path: inset(0 0 50% 0);
+    transform: rotate(0deg);
+    transition:1s linear;
+}
+
+.time {
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    font-size:28px;
+}
+
+/* INPUT */
 input {
-    display:block;
-    margin:10px auto;
     padding:10px;
-    width:220px;
-    border-radius:8px;
     border:none;
+    border-radius:8px;
+    width:100%;
 }
 
 /* BUTTON */
 button {
+    margin:5px;
     padding:10px 15px;
     border:none;
-    border-radius:8px;
+    border-radius:10px;
     background:linear-gradient(45deg, cyan, blue);
     color:white;
     cursor:pointer;
     transition:0.3s;
 }
-button:hover {
-    transform:scale(1.05);
-}
-
-/* DASHBOARD */
-#dashboard { display:none; }
-
-.sidebar {
-    width:220px;
-    height:100vh;
-    position:fixed;
-    background: var(--card);
-    padding:20px;
-}
-
-.main {
-    margin-left:240px;
-    padding:20px;
-}
-
-.card {
-    background: var(--card);
-    padding:20px;
-    border-radius:15px;
-    margin-bottom:20px;
-    transition:0.3s;
-}
-.card:hover { transform: translateY(-5px); }
+button:hover { transform:scale(1.1); }
 
 /* STATS */
 .stats {
-    display:flex;
-    gap:20px;
-    flex-wrap:wrap;
-}
-
-.stat-box {
-    flex:1;
-    min-width:150px;
-    padding:15px;
-    border-radius:12px;
-    background:linear-gradient(45deg, #06b6d4, #3b82f6);
-}
-
-/* PROGRESS */
-.progress {
-    height:10px;
-    background:#444;
-    border-radius:10px;
-    overflow:hidden;
-}
-.progress-bar {
-    height:100%;
-    width:0%;
-    background:lime;
-}
-
-/* MOBILE */
-@media(max-width:768px){
-    .sidebar {
-        position:relative;
-        width:100%;
-        height:auto;
-    }
-    .main {
-        margin-left:0;
-    }
+    margin-top:15px;
+    opacity:0.8;
 }
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
-<div id="loginPage">
-    <div class="login-box">
-        <h2>Login</h2>
-        <input id="username" placeholder="Username">
-        <input type="password" placeholder="Password">
-        <button onclick="login()">Enter</button>
-    </div>
+<div class="container">
+
+<h2>🎯 Focus Mode Pro</h2>
+
+<input id="task" placeholder="What are you focusing on?">
+
+<div class="circle">
+    <div class="progress" id="progress"></div>
+    <div class="time" id="time">25:00</div>
 </div>
 
-<!-- DASHBOARD -->
-<div id="dashboard">
+<button onclick="start()">Start</button>
+<button onclick="reset()">Reset</button>
+<button onclick="sound()">🎧 Sound</button>
 
-<div class="sidebar">
-    <h2>📚 Dashboard</h2>
-    <button onclick="show('home')">Home</button>
-    <button onclick="show('tasks')">Tasks</button>
-    <button onclick="toggleMode()">🌙 Toggle</button>
-    <button onclick="logout()">Logout</button>
-</div>
-
-<div class="main">
-
-<!-- HOME -->
-<div id="home" class="section">
-    <div class="card">
-        <h2>Welcome 👋</h2>
-        <p>Manage your productivity smartly.</p>
-    </div>
-
-    <div class="stats">
-        <div class="stat-box">
-            <h3 id="total">0</h3>
-            <p>Total Tasks</p>
-        </div>
-        <div class="stat-box">
-            <h3 id="done">0</h3>
-            <p>Completed</p>
-        </div>
-    </div>
-
-    <div class="card">
-        <h3>Progress</h3>
-        <div class="progress">
-            <div id="bar" class="progress-bar"></div>
-        </div>
-    </div>
-</div>
-
-<!-- TASKS -->
-<div id="tasks" class="section" style="display:none;">
-    <div class="card">
-        <h3>Add Task</h3>
-        <input id="taskInput" placeholder="Enter task">
-        <button onclick="addTask()">Add</button>
-        <ul id="list"></ul>
-    </div>
+<div class="stats">
+    Sessions Completed: <span id="sessions">0</span>
 </div>
 
 </div>
-</div>
+
+<audio id="audio" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
+</audio>
 
 <script>
-let total=0, done=0;
+let minutes=25, seconds=0, total=1500;
+let interval;
+let sessions=0;
+let audio=document.getElementById("audio");
 
-// LOGIN
-function login(){
-    if(document.getElementById("username").value==="") return alert("Enter username");
-    loginPage.style.display="none";
-    dashboard.style.display="block";
+function update(){
+    let m=String(minutes).padStart(2,'0');
+    let s=String(seconds).padStart(2,'0');
+    document.getElementById("time").innerText=m+":"+s;
+
+    let passed = total - (minutes*60+seconds);
+    let percent = (passed/total)*360;
+    document.getElementById("progress").style.transform = "rotate("+percent+"deg)";
 }
 
-// NAV
-function show(sec){
-    document.querySelectorAll(".section").forEach(s=>s.style.display="none");
-    document.getElementById(sec).style.display="block";
+function start(){
+    if(interval) return;
+
+    interval=setInterval(()=>{
+        if(seconds===0){
+            if(minutes===0){
+                clearInterval(interval);
+                interval=null;
+                sessions++;
+                document.getElementById("sessions").innerText=sessions;
+                alert("Focus Session Complete 🚀");
+                return;
+            }
+            minutes--;
+            seconds=59;
+        } else seconds--;
+
+        update();
+    },1000);
 }
 
-// LOGOUT
-function logout(){ location.reload(); }
-
-// TOGGLE MODE
-function toggleMode(){
-    document.body.classList.toggle("light");
+function reset(){
+    clearInterval(interval);
+    interval=null;
+    minutes=25;
+    seconds=0;
+    update();
 }
 
-// TASK SYSTEM
-function addTask(){
-    let input=document.getElementById("taskInput");
-    if(input.value==="") return;
-
-    total++;
-    document.getElementById("total").innerText=total;
-
-    let li=document.createElement("li");
-    li.innerText=input.value;
-
-    li.onclick=function(){
-        if(!li.classList.contains("done")){
-            li.style.textDecoration="line-through";
-            li.classList.add("done");
-            done++;
-            document.getElementById("done").innerText=done;
-            updateProgress();
-        }
-    }
-
-    document.getElementById("list").appendChild(li);
-    input.value="";
+function sound(){
+    if(audio.paused) audio.play();
+    else audio.pause();
 }
 
-// PROGRESS
-function updateProgress(){
-    let percent=(done/total)*100;
-    document.getElementById("bar").style.width=percent+"%";
-}
+update();
 </script>
 
 </body>
