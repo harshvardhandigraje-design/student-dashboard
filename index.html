@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart Student Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: white;
+}
+
+/* LOGIN SCREEN */
+#loginPage {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-box {
+    background: rgba(255,255,255,0.05);
+    padding: 30px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    text-align: center;
+}
+
+input {
+    display: block;
+    margin: 10px auto;
+    padding: 10px;
+    width: 200px;
+    border-radius: 8px;
+    border: none;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    background: cyan;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+/* DASHBOARD */
+#dashboard {
+    display: none;
+}
+
+.sidebar {
+    width: 200px;
+    height: 100vh;
+    position: fixed;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+}
+
+.sidebar h2 {
+    text-align: center;
+}
+
+.sidebar button {
+    width: 100%;
+    margin: 10px 0;
+}
+
+.main {
+    margin-left: 220px;
+    padding: 20px;
+}
+
+.card {
+    background: rgba(255,255,255,0.05);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.03);
+}
+
+/* smooth fade */
+.fade {
+    animation: fadeIn 0.6s ease-in;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage">
+    <div class="login-box fade">
+        <h2>Login</h2>
+        <input id="username" placeholder="Username">
+        <input type="password" placeholder="Password">
+        <button onclick="login()">Enter</button>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="fade">
+
+    <div class="sidebar">
+        <h2>📚 Menu</h2>
+        <button onclick="showSection('home')">Home</button>
+        <button onclick="showSection('tasks')">Tasks</button>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <div class="main">
+
+        <div id="home" class="section">
+            <div class="card">
+                <h2>Welcome 👋</h2>
+                <p>This is your smart dashboard.</p>
+            </div>
+        </div>
+
+        <div id="tasks" class="section" style="display:none;">
+            <div class="card">
+                <h3>📝 Add Task</h3>
+                <input id="taskInput" placeholder="Enter task">
+                <button onclick="addTask()">Add</button>
+                <ul id="taskList"></ul>
+                <p>Completed: <span id="count">0</span></p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+let count = 0;
+
+// LOGIN FUNCTION
+function login() {
+    let user = document.getElementById("username").value;
+    if(user === "") {
+        alert("Enter username");
+        return;
+    }
+
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
+}
+
+// LOGOUT
+function logout() {
+    location.reload();
+}
+
+// NAVIGATION
+function showSection(section) {
+    document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+    document.getElementById(section).style.display = "block";
+}
+
+// TASK SYSTEM
+function addTask() {
+    let input = document.getElementById("taskInput");
+    let list = document.getElementById("taskList");
+
+    if(input.value === "") return;
+
+    let li = document.createElement("li");
+    li.innerText = input.value;
+
+    li.onclick = function() {
+        li.style.textDecoration = "line-through";
+        count++;
+        document.getElementById("count").innerText = count;
+    };
+
+    list.appendChild(li);
+    input.value = "";
+}
+</script>
+
+</body>
+</html>
